@@ -1,0 +1,14 @@
+[Unit]
+Description=Test socket with PassFileDescriptorsToExec=yes
+
+[Socket]
+ListenStream=127.0.0.1:1111
+ListenStream=[::1]:1111
+ListenDatagram=127.0.0.1:1111
+ListenDatagram=[::1]:1111
+FileDescriptorName=test
+ExecStartPre=/test/test_pass_listen_fds.py expect none
+ExecStartPost=/test/test_pass_listen_fds.py expect four
+ExecStopPre=/test/test_pass_listen_fds.py expect four
+ExecStopPost=/test/test_pass_listen_fds.py expect four
+PassFileDescriptorsToExec=yes

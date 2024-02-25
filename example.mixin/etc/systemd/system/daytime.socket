@@ -1,0 +1,13 @@
+[Unit]
+Description=Daytime service socket
+Requires=socket-dispatch.service
+After=socket-dispatch.service
+
+[Socket]
+# Use arbitrary IP and port. We could use port auto-bind if :0 was supported.
+ListenStream=127.0.0.1:12345
+Accept=yes
+ExecStartPost=/example/sockhash_update.py \
+              /sys/fs/bpf/socket-dispatch/service_socket_map \
+	      daytime
+PassFileDescriptorsToExec=yes

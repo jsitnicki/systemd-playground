@@ -1,0 +1,6 @@
+cflags = -Wall -Wextra
+
+rule bpf-cc
+  command = clang $cflags -target bpf -O2 -ggdb -c $in -o $out
+
+build socket_dispatch.bpf.o: bpf-cc socket_dispatch.bpf.c

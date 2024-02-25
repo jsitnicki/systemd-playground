@@ -1,0 +1,18 @@
+[Unit]
+Description=Sample socket dispatch service using BPF sk_lookup program
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Load BPF sk_lookup program and pin it under /sys/fs/bpf/socket-dispatch/
+ExecStartPre=/sbin/bpftool --nomount prog \
+          loadall /example/socket_dispatch.bpf.o /sys/fs/bpf/socket-dispatch \
+	  pinmaps /sys/fs/bpf/socket-dispatch
+# Map inet port 7 to "daytime" service (key=7, value="daytime\0")
+ExecStartPre=/sbin/bpftool --nomount map update \
+          pinned /sys/fs/bpf/socket-dispatch/port_service_map \
+          key hex 07 00 value hex 64 61 79 74 69 6d 65 00
+# Attach BPF sk_lookup to current network namespace
+ExecStart=/example/sk_lookup_attach.py \
+          /sys/fs/bpf/socket-dispatch/socket_dispatch_prog \
+	  /sys/fs/bpf/socket-dispatch/socket_dispatch_link

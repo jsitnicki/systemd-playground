@@ -1,0 +1,6 @@
+[Unit]
+Description=Test service
+
+[Service]
+ExecStart=/test/test_pass_listen_fds.py expect four
+Type=oneshot
